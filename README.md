@@ -1,16 +1,28 @@
-# $Toolname Tools
+# This2That Toolkit
 
-> Tools for interacting with $Toolname, including a Python API wrapper
+> This2That, a toolkit for converting one entity to another
 
-**NOTE:** For Python tool repo names, stick with underscores (eg 'tools_app'.  Hyphens can cause issues during imports.
-
-One Paragraph of project description goes here
+Design Principles:
+* Each function converts one entity to one other entity
+    * The input and output entities are not necessarily simple
+    * But they should be obvious, not vaguely defined
+    * If entities are complex, intermediate this2that steps may occur within a given function
+* Each function may contain only the following lines of code:
+    * Code required for the function
+    * Validation for input (and possibly output) entities
+    * Error Handling
+    * Comments
+* Validation is minimal, present, and optional (validate=False)
+    * Regex is the preferred method of validation, when appropriate
+* Errors are descriptive and concise
+* Occam's Razor wins
+    * When something is unclear--whether entity format, process, or otherwise, the least complex wins
 
 ## Table of Contents
-1. [$Toolname Python API Wrapper](#$Toolname-Python-API-Wrapper)
+1. [This2That Python API Wrapper](#This2That-Python-API-Wrapper)
 2. [Metadata](#Metadata)
 
-![](plalceholder.png)
+![](placeholder.png)
 
 ## Getting Started
 
@@ -24,8 +36,8 @@ One Paragraph of project description goes here
 There is no formal installation process at this time, but using [git subtrees](https://www.atlassian.com/git/tutorials/git-subtree) is strongly recommended.  Unfortunately there is no 'helper' integration for git subtrees in VS Code, so using the actual git commands are necessary:
 
 ```bash
-git subtree add --prefix tools/$toolname https://github.com/epopisces/tools_$toolname master --squash
-git fetch https://github.com/epopisces/tools_$toolname master
+git subtree add --prefix tools/This2That https://github.com/epopisces/tools_This2That master --squash
+git fetch https://github.com/epopisces/tools_This2That master
 
 # Breaking the above down, the following command creates the subtree and the connection to the remote repo
 '''
@@ -45,16 +57,16 @@ git fetch <source-repo> <branch>
 
 But what if the remote tool repo gets updated?  Pulling the latest changes is super easy, barely an inconvenience: just use the same command above with 'git subtree pull' instead of 'git subtree add':
 ```
-git subtree pull --prefix tools/$toolname https://github.com/epopisces/tools_$toolname master --squash
+git subtree pull --prefix tools/This2That https://github.com/epopisces/tools_This2That master --squash
 ```
 
 Alternately git submodules can also be used; however, git submodules are not as easy to maintain and keep updated.  The recommendation is only to use git submodules if the tools repo is also going to be developed as part of the project, instead of just used as a static library by the main project.
 
 The differences between git subtrees and git submodules are described in depth [in this article](https://martowen.com/2016/05/01/git-submodules-vs-git-subtrees/#:~:text=The%20simplest%20way%20to%20think,specific%20commit%20in%20another%20repository.&text=Subtrees%20are%20easier%20to%20pull,copies%20of%20the%20original%20repository).
 
-# $Toolname Python API Wrapper
+# This2That Python Toolkit
 
-## $toolname_api.py
+## this2that.py
 
 ### Capabilities
 * Authentication against API
@@ -65,10 +77,10 @@ The differences between git subtrees and git submodules are described in depth [
 The below assumes you are using the repo as a subtree as described above.  Note this will require creating a empty `__init__.py` file in the 'tools' folder if there is not one present already so Python's import function can traverse the directories to get to the tool.
 ```python
 import os
-from tools.$toolname import $toolname_api as bbk
+from tools.This2That import this2that as bbk
 
-acct_email = os.getenv('$toolname_email')        # Use environment variable by this name to store a username for the API user
-acct_pass = os.getenv('$toolname_pass')       # Use environment variable by this name to store a password for the API user
+acct_email = os.getenv('this2that_email')        # Use environment variable by this name to store a username for the API user
+acct_pass = os.getenv('this2that_pass')       # Use environment variable by this name to store a password for the API user
 bb = bbk.BaseBrick(acct_email, acct_pass)
 
 abbrev.{function-name}({parameters})
@@ -100,7 +112,7 @@ Explain how to run the automated tests
 
 ### Authors
 
-* [**epopisces**](https://github.com/epopisces) - Created the $toolname_api
+* [**epopisces**](https://github.com/epopisces) - Created the this2that
 
 See also the list of [contributors](https://github.com/<projname>/contributors) who participated in this project.
 
