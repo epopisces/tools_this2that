@@ -1,0 +1,145 @@
+﻿cde,report_name,index,cde_name,relevance,characteristics,defined,sphere,layer,subcategory,form,example,aliases,rex,rex_confidence,id_confidence_notes,intrinsic_CDE,extrinsic_CDE,descendant_CDEs,ancestor_CDEs,master_CDE,python_type,default_extension,Notes
+Key Field,"16 Char limit name. Used for report column headers, and key field derived from this","1 - It's an Index.  Though not used as a key field, often used programmatically for iteration","CDE Name (Official: acronyms acceptable).  Orange is default key ID for sphere, (light orange is fallback)","Relevance to end user.  values over 4 are assumed to be 'Under the hood' (uth): used programmatically, not displayed to end user except by special call.  Value of 1 is returned in other sphere's queries",field to assist in programmatically IDing/generating rex,"where defined, if formally defined",Sphere of Function.  CDEs have have a higher correlation score with others within their sphere,,,"aka Class, but we can't use that one :).  Defines handling: conversion to this form is mandatory, and takes place during Ingestion",example of term after conversion to form,Common aliases for header lookups.  Includes misspellings because. . .reasons.  Could use as key to determine what rex to call for identification,Regex is king!,Confidence is specified by the function used to id the term (ie Regex),FLI,Current CDE contains [$] (eg IPv4 Addr contains IPv4 Octet 1)...how would this be implemented differently than a tool call?,Current CDE is contained by [$],Can derive [CDE] from current index via tool,"Current index may be derived from [#] via tool (also if [#] is known, can confirm correlation)","Derive master CDE via tool prior to further conversions/lookups.  Ordered lookup: will attempt first term, then second, etc.  By default will assume create master key from original term if no derivations found (self-referential included for explicit top levels)",,,
+arraysatzero,Arrays at Zero,2,Arrays Start at Zero (sadly the two header rows make this joke fall flat),8,,,,,,,,,.^,10,I'm absolutely certain arrays start at 0,DNA,DNA,,,,list,.txt,
+ingest,Ingest,3,Ingest,1,Calls ingest module,,Programmatic,8,Meta,Python,,DNA,.^,10,Only called via descendant,DNA,DNA,,,Tail,string,.txt,
+multiterm,Multiterm,4,Multiple Terms,1,comma or other separator separated terms,,Term,8,Meta,Term,"this, that, there",DNA,"\b(.*,.*,|.*;.*;)",10,,,,url;arraysatzero,,,list,.txt,
+likelymultiterm,Likely Multiterm,5,Multiple Terms Low Confidence,1,comma or other separator separated terms,,Term,8,Meta,Term,"this, that",DNA,"\b(.*,.*|.*;.*)",8,"Might not be a multiterm, may be something with a comma in it",,,filename;ingest,,ingest,list,.txt,The idea being low confidence would also be run through the rest of the rex to see if there was a different match
+csvfilepath,CSV Filepath,6,CSV Filepath,1,*.csv,,File,8,Meta,Filename;URL;Term,,DNA,\b.*\.csv\b,10,,,,filename;ingest,,ingest,string,.txt,The tough part will be to recognize whether this is a file for ingesting vs an actual term in a field
+excelfilepath,Excel Filepath,7,Excel Filepath,1,"*.xls;*.xlsx,*.xlsb",,File,8,Meta,Filename;URL;Term,,DNA,\b.*\.(xlsb|xlsx|xls)\b,10,,,,filename;ingest,,ingest,string,.txt,The tough part will be to recognize whether this is a file for ingesting vs an actual term in a field
+txtfilepath,TXT Filepath,8,TXT Filepath,1,*.txt,,File,8,Meta,Filename;URL;Term,,DNA,\b.*\.txt\b,10,,,,filename;ingest,,ingest,string,.txt,The tough part will be to recognize whether this is a file for ingesting vs an actual term in a field
+jsonfilepath,JSON Filepath,9,JSON Filepath,1,*.json,,File,8,Meta,Filename;URL;Term,,DNA,\b.*\.json\b,10,,,,filename;ingest,,ingest,string,.txt,The tough part will be to recognize whether this is a file for ingesting vs an actual term in a field
+otherfilepath,Other Filepath,10,Other Filepath,3,,,File,8,Meta,,,DNA,.^,,,,,,,Ingest,string,.txt,
+url,URL,11,URL,2,,,Networking,7,Meta,URL,,"website,link,",.^,,,,,,,,string,.txt,
+filename,Filename,12,Filename,1,*.[extension],,File,8,Meta,Dict,,,.^,,,,,,,,string,.txt,
+ipv4loopback,IPv4 Loopback,13,IPv4 Loopback Address,5,127.0.0.1/8,,Networking,3,Network,IPv4,127.0.0.1,"loopback,",\b(127\.((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){2}(25[0-5]|2[0-4]\d|[01]?\d\d?))\b,10,,,,,,Tail,string,.txt,
+ipv4pvtrange,IPv4 Pvt Range,14,IPv4 Range,4,,,PrivateNetworks,3,,"IPv4CIDR or [IPv4,IPv4,IPv4...]","192.168.0.1,192.168.0.2,192.168.0.3...","iprange,ipblock,ipspace",.^,,,ipv4pvtipcidr;ipv4privateip,,ipv4pvtipcidr,,ipv4pvtipcidr;ipv4privateip,string,.txt,Standard form for display is either IPv4/CIDR (preferred) or list of IPs.
+ipv4pubrange,IPv4 Pub Range,15,IPv4 Range,4,,,PublicNetworks,3,Network,"IPv4CIDR or [IPv4,IPv4,IPv4...]","192.168.0.1,192.168.0.2,192.168.0.3...","iprange,ipblock,ipspace",.^,,,ipv4pubipcidr;ipv4publicip,,ipv4pubipcidr,,ipv4pubipcidr;ipv4publicip,string,.txt,Standard form for display is either IPv4/CIDR (preferred) or list of IPs.
+ipv4pvtipcidr,IPv4 Pvt IP/CIDR,16,IPv4 Private Address with CIDR,2,Defined in RFC-1918,RFC-1918,PrivateNetworks,3,Network,CIDR,192.168.0.1/24,"ipblock,iprange,ipspace",\b(10\.((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){2}(25[0-5]|2[0-4]\d|[01]?\d\d?))\/[1-3]?\d|(172\.(([1-3]\d)\.)((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)(25[0-5]|2[0-4]\d|[01]?\d\d?))\/[1-3]?\d|(192\.168\.((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)(25[0-5]|2[0-4]\d|[01]?\d\d?))\/[1-3]?\d\b,10,,ipv4privateip;ipv4subnet;cidrnotation;ipv4netid;broadcastaddr,,ipv4privateip;ipv4subnet;cidrnotation;ipv4netid;broadcastaddr,,ipv4privateip,string,.txt,Should be able to freely convert back and forth between list of IPs and IPv4/CIDR
+ipv4privateip,IPv4 Private IP,17,IPv4 Private Address,1,Defined in RFC-1918,RFC-1918,PrivateNetworks,3,Host,IPv4,192.168.0.2,"address,ipaddress,ipaddr,ip,ipv4,privip,privateip,private",\b(10\.((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){2}(25[0-5]|2[0-4]\d|[01]?\d\d?))|(172\.(([1-3]\d)\.)((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)(25[0-5]|2[0-4]\d|[01]?\d\d?))|(192\.168\.((25[0-5]|2[0-4]\d|[01]?\d\d?)\.)(25[0-5]|2[0-4]\d|[01]?\d\d?))\b,10,, ,,hostname;fqdn;domain;alias;ispingable,ipv4pvtipcidr,hostname;ipv4privateip,string,.txt,"URL ascendant when in the form http://10.10.10.125:8080.  Using hostname as master term, DHCP workstations are example of why"
+ipv4pubipcidr,IPv4 Pub IP/CIDR,18,IPv4 Public Address with CIDR,2,0-254.0-255.0-255.0-254,,PublicNetworks,3,Network,IPv4CIDR,8.8.8.8/32,"ipblock,iprange,ipspace",\b((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)\/[1-3]?\d\b,9,,ipv4publicip,,ipv4publicip;ipv4subnet;cidrnotation;ipv4netid;broadcastaddr,,,string,.txt,
+ipv4publicip,IPv4 Public IP,19,IPv4 Public Address,1,Defined in RFC-791,RFC-791,PublicNetworks,3,Host,IPv4,8.8.8.8,"address,ipaddress,ipaddr,ip,ipv4,pubip,publicip,public",\b((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)\b,8,"Conf of 8 - Could be multicast, etc.  Additional filters would bring to 10 (note also there is a MAC address format that uses aab.bcc.112.223, which is disgusting but has a vanishingly small chance of collisions)",,,domain;extfqdn;hostname;alias;ispingable,ipv4pubipcidr,ipv4publicip,string,.txt,"Would like to have ExternalFQDN be master, but as often as not this returns something like '<ip>.ip.incapdns.net' or something"
+ipv4octet1,IPv4 Octet 1,20,IPv4 Octet 1,8,0-255,,Networking,3,Network,Octet,255,"ipv4octet,octet",.^,,,,,,,Tail,int,.txt,
+ipv4octet2,IPv4 Octet 2,21,IPv4 Octet 2,8,0-255,,Networking,3,Network,Octet,255,"ipv4octet,octet",.^,,,,,,,Tail,int,.txt,
+ipv4octet3,IPv4 Octet 3,22,IPv4 Octet 3,8,0-255,,Networking,3,Network,Octet,255,"ipv4octet,octet",.^,,,,,,,Tail,int,.txt,
+ipv4octet4,IPv4 Octet 4,23,IPv4 Octet 4,8,0-255,,Networking,3,Network,Octet,255,"ipv4octet,octet",.^,,,,,,,Tail,int,.txt,
+ipv4subnet,IPv4 Subnet,24,IPv4 Subnet,4,0-255.0-255.0-255.0-255,,Networking,3,Network,IPv4,255.255.255.0,"ipv4subnet,subnet",\b((255)(255|2[0-4]\d|[01]?\d\d?)\.){2}(25[0-5]|2[0-4]\d|[01]?\d\d?)\b,9,,,,cidrnotation,,cidrnotation,string,.txt,"Strictly speaking, won't match subnets smaller than /8. . .but it's vanishingly rare that functionality would be needed"
+ipv4wildcard,IPv4 Wildcard,25,IPv4 Wildcard,5,0-255.0-255.0-255.0-255,,Networking,3,Network,IPv4,0.0.0.255,"ipv4wildcard,wildcard",\b0\.((255|2[0-4]\d|[01]?\d\d?)\.){2}(255|2[0-4]\d|[01]?\d\d?)\b,,,,,ipv4subnet,,ipv4subnet,string,.txt,Cisco's weird reverse mask thing
+cidrnotation,CIDR Notation,26,IPv4 CIDR Notation,8,/1-32,,Networking,3,Network,CIDR,/24,"ipv4cidrnotation,ipv4cidr,cidrnotation,cidr,notation,ipv4subnet",\b\/[1-3]?\d\b,,,,,ipv4subnet,,cidrnotation,string,.txt,"This needs to match much later, after the field types that may have /# in them are satisfied (for example hostnames like MLWMAD12/13)"
+ipv4netid,IPv4 NetID,27,IPv4 Network ID,5,,,Networking,3,Network,IPv4,192.168.0.1,"networkidentifier,networkid,netid,networkaddress,networkaddr,netaddr",.^,,,,,,,Tail,string,.txt,"In conjunction with BroadcastAddr, could derive CIDR, but eh.  Low priority"
+broadcastaddr,Broadcast Addr,28,IPv4 Broadcast Address,5,,,Networking,3,Network,IPv4,192.168.0.255,"broadcastaddress,broadcastaddr,broadcast",.^,,,,,,,Tail,string,.txt,
+ipv6pubaddr,IPv6 Pub Addr,29,IPv6 Public Address,3,,,PublicNetworks,3,Host,IPv6,,"IPv6address,IPv6addr,IPv6,address","(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))",10,,,,,,,string,.txt,
+ipv6privaddr,IPv6 Priv Addr,30,IPv6 Private Address (link local?),2,,,PrivateNetworks,3,Host,IPv6,,,.^,,,,,,,,string,.txt,
+mac,MAC,31,MAC Address,4,,,Networking,2,Host,MAC-48,AA-BB-CC-11-22-33,"mediaaccesscontroladdress,mediaaccesscontrol,macaddress,macaddr,mac",\b([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})|([0-9A-Fa-f]{4}\.){2}([0-9A-Fa-f]{4})\b,,,,,ipv4privateip;oui,,ipv4privateip,string,.txt,
+oui,OUI,32,OUI,4,,,Networking,2,Network,OUI,AA-BB-CC,"organizationallyuniqueidentifier,organizationallyuniqueid,ouiidentifier,oui",.^,,,,,manufacturer;eui-64;modifiedeui-64,mac,,string,.txt,Likely only revealed to the end user as a manufacturer
+eui-64,EUI-64,33,EUI-64,8,,,Networking,2,Host,EUI-64,AA-BB-CC-FF-FF-11-22-33,,.^,,,,,,,,string,.txt,
+modifiedeui-64,Modified EUI-64,34,IPv6 Modified EUI-64,6,,,Networking,2,Host,EUI-64,A8-BB-CC-FF-FE-11-22-33,,.^,,,,,,,,string,.txt,
+ipv6prefix,IPv6 Prefix,35,IPv6 Routing Prefix,5,,,Networking,3,Network,IPv6-64,2001:aabb:cc11:2233,,.^,,,,,,,,string,.txt,
+ipv6subnet,IPv6 Subnet,36,IPv6 Subnet ID,5,,,Networking,3,Network,IPv6-16,aa:bb,,.^,,,,,,,,string,.txt,
+ipv6iid,IPv6 IID,37,IPv6 Interface ID,5,,,Networking,3,Host,IPv6-64,a8bb:ccff:fe11:2233,,.^,,,,,,,,string,.txt,Example shows a link local conversion (with the link local prefix).  Other conversions are possible as well
+ipv6eui-64addr,IPv6 EUI-64 Addr,38,Link Local IPv6 EUI-64 Address,5,,,Networking,3,Host,IPv6,fe80::a8bb:ccff:fe11:2233,,.^,,,,,,,,string,.txt,
+port,Port,39,Port,1,0-65535,,Networking,4,Network,Port,8080,,.^,,,,,,,,int,.txt,
+protocolport,Protocol/Port,40,Protocol/Port,4,icmp|tcp|udp/0-65535,,Networking,4,Network,Protocol/Port,tcp/8080,,.^,10,,,,,,,string,.txt,
+protport,Prot/Port,41,Prot/Port,4,i|t|u/0-65535,,Networking,4,Network,Prot/Port,t/8080,,.^,9,"pretty unique form, but not universally accepted",,,,,,string,.txt,
+domain,Domain,42,Domain,4,,,Networking,7,AD,Term,,domain(s),.^,,,,,,,,string,.txt,
+fqdn,FQDN,43,Internal FQDN,2,,,PrivateNetworks,7,,URL,,,.^,,,domain;tld;subdomain1;hostname,,,,hostname,string,.txt,
+extfqdn,extFQDN,44,External FQDN,1,,,PublicNetworks,7,Host,URL,,"fully qualified domain name,resolvesto",.^,,,,,,,IPv4PublicIP,string,.txt,Would like this to be master. . .needs to be available for fast lookups I would think
+tld,TLD,45,TLD,6,,,Networking,7,,Term,,,.^,,,,fqdn;extfqdn,,,Tail,string,.txt,
+mgmtip,Mgmt IP,46,Management Interface.IP,3,,,Networking,3,Host,IPv4,,mgmt ip,.^,,,,,,,,string,.txt,
+int1ip,int1 IP,47,Interface 1.IP,3,,,Networking,3,Host,IPv4,,,.^,,,,,,,,string,.txt,Only actually useful when there is more than 1 known int or IP
+vlannumber,VLAN Number,48,VLAN Number,3,,,PrivateNetworks,3,Network,Number,,,.^,,,,,vlanname,,,int,.txt,
+vlanname,VLAN Name,49,VLAN Description,3,,,PrivateNetworks,3,Network,Term,,allocatedto,.^,,,,,vlannumber,,,string,.txt,
+subdomain1,Subdomain1,50,Subdomain 1,5,,,Networking,7,,Term,,,.^,,,,,,,,string,.txt,
+subdomain2,Subdomain2,51,Subdomain 2,6,,,Networking,7,,Term,,,.^,,,,,,,,string,.txt,
+subdomain3,Subdomain3,52,Subdomain 3,7,,,Networking,7,,Term,,,.^,,,,,,,,string,.txt,
+subdomain4,Subdomain4,53,Subdomain 4,8,,,Networking,7,,Term,,,.^,,,,,,,,string,.txt,
+hostname,Hostname,54,Hostname,1,,,Networking,7,Host,Term,,"name,host,appliance",\b((fz.*)|(add|ant|app|arl|atl|azu|bdw|blt|bng|brc|brd|bri|brk|brt|bru|can|car|cer|che|chi|chn|chw|col|cpi|del|dny|dub|dun|eds|elg|ess|fai|fla|foo|fra|grb|gzu|hjn|hkg|hon|jck|jss|kpa|kvk|lac|lon|lyn|mau|mem|mex|mia|mir|mlt|mlw|mnj|mns|mpn|msc|nor|nyc|nyf|nyo|nys|orl|osh|ost|par|phi|pla|pom|ptr|rec|rek|rew|roh|rpg|sal|scc|sco|sec|seo|sfh|shw|sin|syd|tai|tea|tok|tor|tpe|trn|trt|tsc|tsf|tss|uxb|vab|van|via|wau|waw|wbi|wdc|wde|wht|wua)(([a-z]){3}|([a-z]){9}))\d+\b,9,Plausibly could be something else (non-host),,fqdn,ipv4privateip;fqdn;vlannumber;sitecode;ispingable,,hostname,string,.txt,"Should account for slashes and hyphens for range of hosts.  If this went Open Source this would be a generic field derived from FQDN unless customized.  Ughhhh just realized this should be a universal hostname, which means the regex will be INSANE"
+alias,Alias,55,Alias,3,,,Networking,7,Host,Term,,dnsalias,.^,,,,,,,,string,.txt,DNS Alias
+trustzone,Trust Zone,56,Trust Zone,3,,,Networking,8,Network,Term,Highest,,.^,,,,,,,,string,.txt,
+segzone,Seg Zone,57,Segmentation Zone,3,,,Networking,8,Network,Term,Data,,.^,,,,,,,,string,.txt,
+defaultgateway,Default Gateway,58,Default Gateway,3,,,Networking,3,Network,IPv4;Term,,"gateway,nexthop",.^,,,,,,,,string,.txt,
+interface,Interface,59,Interface,,,,Networking,1,,Term,,int,.^,,,,,,,,string,.txt,
+sitecode,Site Code,60,Site Abbreviation,2,,,Networking;Location,1,,Term,,"location,sitename,site,acronym",.^,,,,hostname,address;site,hostname;fqdn;site,sitecode,string,.txt,Custom to Foot Locker
+site,Site,61,Full Site Name,3,,,Location,1,,Term,,location,.^,,,,hostname,address;sitecode,sitecode,sitecode,string,.txt,
+address,Address,62,Full Address,,,,Location,1,,Multiline Term,,,.^,,,,,,,,string,.txt,
+streetaddress,Street Address,63,Street Address Line,,,,Location,1,,Term,123 Main St,,.^,,,,,,,,string,.txt,
+streetaddr2,Street Addr2,64,Street Address Line 2,,,,Location,1,,Term,Unit 4,,.^,,,,,,,,string,.txt,
+city,City,65,City,,,,Location,1,,Term,Mainly,,.^,,,,,site,,sitecode,string,.txt,
+statecode,State Code,66,2 Digit State,,,,Location,1,,Term,ME,,.^,,,,,,,,string,.txt,
+state,State,67,"State, Province, Region",,,,Location,1,,Term,Maine,,.^,,,,,,,,string,.txt,
+country,Country,68,Country,,,,Location,1,,Term,US,,.^,,,,,,,,string,.txt,
+zipcode,Zip Code,69,5 Digit Zip,,,,Location,1,,Integer,04333,zip,\b(\d){5}\b,4,"Low confidence, lots of 5 digit combos exist",,,,,,int,.txt,
+fullzipcode,Full Zip Code,70,9 Digit Zip,,,,Location,1,,Term,04333-0007,,\b(\d){5}-(\d){4}\b,7,,zipcode,,,,,string,.txt,
+otherzipcode,Other Zip Code,71,International Zip Codes,,,,Location,1,,Term,,,.^,,,,,,,,string,.txt,
+itemname,Item Name,72,Item Name,,,,Hardware;Application,,,Term,,itemname,.^,,,,,,,,string,.txt,"Combination of Make and Model, used in some spreadsheets such as Routers & Switches"
+brand,Brand,73,Brand,,,,Hardware;Application,,,Term,,"manufacturer,make",.^,,,,,,,,string,.txt,
+sn,S/N,74,S/N,,,,Hardware;Application,,Host,Term,,"serial,serial no,serial #,serial numserial number",.^,,,,,,,,string,.txt,
+pn,P/N,75,P/N,,,,Hardware,,,Term,,"part, part no, part num, part #, part numer",.^,,,,,,,,string,.txt,
+manufacturer,Manufacturer,76,Manufacturer,,,,Hardware,,,Term,,company,.^,,,,,,,,string,.txt,
+model,Model,77,Model,,,,Hardware,,,Term,,type,.^,,,,,,,,string,.txt,
+description,Description,78,Description,1,,,Context,,,Description,,"desc,specialcomments",.^,,,,,,,,string,.txt,Used in all spheres
+notes,Notes,79,Notes,1,,,Context,,,Description,,"context,misc,comments",.^,,,,,,,,string,.txt,Notes has a notes field.  Weird eh?  Used in all spheres
+os,OS,80,OS,,,,Hardware,,,Term,,operating system,.^,,,,,,,,string,.txt,
+osversion,OS Version,81,OS Version,,,,Hardware,,,Term,,version,.^,,,,,,,,string,.txt,
+license,License,82,Software License,,,,Application,,,Term,,license,.^,,,,,,,,string,.txt,
+purchasedate,Purchase Date,83,Purchase Date,,,,Hardware;Application,,,Date,,"date acquired,date of purchase, acquisition date",.^,,,,,,,,string,.txt,
+eoldate,EoL Date,84,End of Life Date,,,,Hardware,,,Date,,"end of life, eol date, end-of-life",.^,,,,,,,,string,.txt,
+eosdate,EoS Date,85,End of Support Date,,,,Hardware;Application,,,Date,,"end of support, maintenance expires, maint exp, support expires",.^,,,,,,,,string,.txt,
+2ndlicense,2nd License,86,Secondary License 1,,,,Hardware;Application,,,Term,,,.^,,,,,,,,string,.txt,
+3rdlicense,3rd License,87,Secondary License 2,,,,Hardware;Application,,,Term,,,.^,,,,,,,,string,.txt,
+version,Version,88,Software Version,,,,Application,,,Term,,"version,patch",.^,,,,,,,,string,.txt,
+dataacquired,Data Acquired,89,Data Acquired Timestamp,,,,Meta,,,Date,,,.^,,,,,,,,string,.txt,
+datasource,Data Source,90,Data Source,,,,Meta,,,Filename;URL;Term,,,.^,,,,,,,,string,.txt,
+datafreshness,Data Freshness,91,Data Source Timestamp,,,,Meta,,,Date,,"sourcedate,sourcetimestamp",.^,,,,,,,,string,.txt,
+replaceddate,Replaced Date,92,Replacement Date,,,,Hardware;Application,,,Date,,replacementyear,.^,,,,,,,,string,.txt,
+purpose,Purpose,93,Purpose,,,,,,,Term,,"role,taskedwith,task",.^,,,,,,,,string,.txt,
+application,Application,94,Application,1,,,,,,Term,,application,.^,,,,,,,,string,.txt,Consider including in basic networking results
+businessowner,Business Owner,95,Business Owner,,,,,,,Name,,"projectowner,projowner",.^,,,,,,,,string,.txt,
+appowner,App Owner,96,Application Owner,,,,,,,Name,,managedby,.^,,,,,,,,string,.txt,
+systemowner,System Owner,97,System Owner,,,,,,,Name,,technicalowner,.^,,,,,,,,string,.txt,
+vertical,Vertical,98,Vertical,,,,,,,Term,,,.^,,,,,,,,string,.txt,
+director,Director,99,Director Purview,,,,,,,Name,,director;directorowner,.^,,,,,,,,string,.txt,
+compliancescope,Compliance Scope,100,Compliance Scope,,,,,,,Term,PCI,,.^,,,,,,,,string,.txt,
+email,Email,101,Email,,,,,,,Email,name@domain.tld,,.^,,,,,,,,string,.txt,
+internalpoc,Internal PoC,102,Internal PoC,,,,,,,Name;Email,,,.^,,,,,,,,string,.txt,
+thirdpartypoc,Third Party PoC,103,Third Party PoC,,,,,,,Name;Email,,pointofcontact,.^,,,,,,,,string,.txt,
+stakeholders,Stakeholders,104,Stakeholders,,,,,,,Name,,,.^,,,,,,,,string,.txt,Present on RACI Matrix
+consulted,Consulted,105,Consulted,,,,,,,Term,,consultants,.^,,,,,,,,string,.txt,RACI term
+accountable,Accountable,106,Accountable,,,,,,,Term,,,.^,,,,,,,,string,.txt,
+responsible,Responsible,107,Responsible,,,,,,,Term,,,.^,,,,,,,,string,.txt,
+informed,Informed,108,Informed,,,,,,,Term,,,.^,,,,,,,,string,.txt,
+qty,Qty,109,Quantity,,,,,,,Number,,,.^,,,,,,,,int,.txt,
+history,History,110,History,5,"Text, Always append never overwrite",,Omni,,,Term,2018.10.24 - Dynamic Update; 2018.09.22 Object Created,,.^,,,,,,,,string,.txt,"Mandatory field, but not included in brief views"
+projmanager,Proj Manager,111,Project Manager,,,,,,,Name,,"pm,projmgr,projectmgr",.^,,,,,,,,string,.txt,
+status,Status,112,Status,,,,,,,Term,,,.^,,,,,,,,string,.txt,"Not realtime status/uptime: project status, remediation status, etc"
+3rdpartyname,3rd Party Name,113,Third Party Name,,,,,,,Term,,thirdparty;externalparty;externalentity,.^,,,,,,,,string,.txt,
+criticaltier,Critical Tier,114,Business Criticality,,,,,,,Number,,,.^,,,,,,,,string,.txt,
+username,Username,115,Username,,,,,,,Term,lgallagher,,.^,,,,,,,,string,.txt,
+usersname,Users Name,116,User's Name,,,,Identity,,,Name,Lucas Gallagher,name,.^,,,,,#REF!,,#REF!,string,.txt,
+userrole,User Role,117,User Role,,,,Identity,,,Term,Security Engineer,,.^,,,,,department,,#REF!,string,.txt,
+department,Department,118,Department,,,,Identity,,,Term,Information Security,,.^,,,,,,,#REF!,string,.txt,
+jobtitle,Job Title,119,Job Title,,,,Identity,,,Term,Security Engineer,,.^,,,,,userrole;jobdescription,,#REF!,string,.txt,
+jobdescription,Job Description,120,Job Description,,,,Identity,,,Term,Engineers security systems,,.^,,,,,,,#REF!,string,.txt,
+svcaccount,Svc Account,121,Service Account,,,,Identity,,,UID,,,.^,,,,,,,,string,.txt,
+appaccount,App Account,122,Application Account,,,,Identity;Application,,,UID,,,.^,,,,,,,,string,.txt,
+hostrole,Host Role,123,Host Role,,,,Networking,,,Term,Domain Controller,,.^,,,,,,,hostroleabbre,string,.txt,
+hostroleabbre,Host Role Abbre,124,Host Role Abbreviation,,3 Char Abbreviation,,Networking,7,,Term,,,.^,,,,hostname,hostrole,hostname,hostroleabbre,string,.txt,
+ispingable,Is Pingable,125,Responds to Ping,3,Boolean,,Networking,3,,Boolean,True,ping,.^,,,,,,,,bool,.txt,
+pingtimestamps,Ping Timestamps,126,Ping Uptimes,5,List of dates,,Networking,3,,Date,,,.^,,,,,,,,datetime,.txt,
+mtarelay,MTA Relay,127,MTA Relay,,,,,,,,,iplastrelay,.^,,,,,,,,string,.txt,
+mxrecord,MX Record,128,MX Record,,,,,,,,,,.^,,,,,,,,string,.txt,
+spfrecord,SPF Record,129,SPF Record,,,,,,,,,,.^,,,,,,,,string,.txt,
+dkimrecord,DKIM Record,130,DKIM Record,,,,,,,,,,.^,,,,,,,,string,.txt,
+dmarcrecord,DMARC Record,131,DMARC Record,,,,,,,,,,.^,,,,,,,,string,.txt,
+txtrecord,TXT Record,132,TXT Record,,,,,,,,,,.^,,,,,,,,string,.txt,
+arecord,A Record,133,A Record,,,,,,,,,,.^,,,,,,,,string,.txt,
+nsrecord,NS Record,134,NS Record,,,,,,,,,,.^,,,,,,,,string,.txt,
+3rdpartyhost,3rd Party Host,135,3rd Party Host,,,,,,,,,hostedby,.^,,,,,,,,string,.txt,
+csv,CSV,136,CSV,,Comma separated list,,File Format,7,,,"thing1, thing2, thing3",,.^,,,,,,,,list of lists,.csv,
+json,JSON,137,JSON,,JSON compatible object,,File Format,7,,,{'thing': {'key':'value'}},,.^,,,,,,,,json object,.json,
+xml,XML,138,XML,,XML compatible object,,File Format,7,,,,,.^,,,,,,,,string,.xml,
+excel,EXCEL,139,EXCEL,,Excel document object,,File Format,7,,,,,.^,,,,,,,,string?,.xlsx,
+string,String,140,String,,It's a string,,Object Type,7,,,,text,.^,1,,,,,,,string,.txt,
+test,Test,141,Test,,,,,,,,,,.^,,,,,,,,string,.txt,
+unknown,Unknown,142,Unknown,1,Unable to ID,,Context,0,,Term,supercalifragilisticexpialidocious,,\b(.*)\b,0,The means of identification of this term haven't been defined yet,,,,,,string,.txt,"Catchall rex, should always be at bottom of list"
+,,,TEXT,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,
