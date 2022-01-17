@@ -3,8 +3,8 @@
 > This2That, a toolkit for converting one entity to another
 
 Design Principles:
-* Each function converts one entity to one other entity
-    * The input and output entities are not necessarily simple
+* Each function resolves one entity to one other entity
+    * The input and output entities are not necessarily simple, but are individual objects
     * But they should be obvious, not vaguely defined
     * If entities are complex, intermediate this2that steps may occur within a given function
 * Each function may contain only the following lines of code:

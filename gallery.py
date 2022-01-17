@@ -7,8 +7,32 @@
 #? Convert methods      input           input       return          input
 #? Separate into submodules in the future
 
+#* The gallery should
+
+import csv
+
 from classifier import classify
 import validator
+
+def load_cde_index():
+    cde_index = {}
+    with open("data/cde_index.csv", newline='') as csvfile:
+        cde_index_list = list(csv.reader(csvfile))
+    for row in cde_index_list:
+        cde_index[row[0]] = {
+            'index': row[2],
+            'cde_name': row[3],
+            'relevance': row[5],
+            'sphere': row[7],
+            'rex': row[13],
+            'rex_confidence': row[14],
+            'descendant_cdes': row[18],
+            'ancestor_cdes': row[19],
+            'master_cde': row[20],
+            'default_extension': row[22],
+        }
+    return cde_index
+
 
 #region #####     VALIDATE                                                #####
 ###############################################################################
@@ -44,7 +68,7 @@ def to_filepath(origin_entity, output_dest, origin_cde='string', validate=True):
         status = to_absolutefilepath(origin_entity, output_dest, origin_cde=origin_cde, validate=validate)
     else:
         status = to_relativefilepath(origin_entity, output_dest, origin_cde=origin_cde, validate=validate)
-    return status
+    return status, 1
 
 def to_absolutefilepath(origin_entity, output_dest, origin_cde='string', validate=True):
     """call appropriate to_<filetype> CONVERT method, then output to output_dest
@@ -54,7 +78,7 @@ def to_absolutefilepath(origin_entity, output_dest, origin_cde='string', validat
         if not validate(origin_entity, origin_cde):
             raise ValueError(f"{origin_entity} is not a {origin_cde}")
 
-    return True
+    return True, 1
 
 def to_relativefilepath(origin_entity, output_dest, origin_cde='string', validate=True):
     """call appropriate to_<filetype> CONVERT method, then output to output_dest
@@ -63,7 +87,7 @@ def to_relativefilepath(origin_entity, output_dest, origin_cde='string', validat
         # dynamic validate method via origin_cde (eg 'validate_json', where cde = json)
         if not validate(origin_entity, origin_cde):
             raise ValueError(f"{origin_entity} is not a {origin_cde}")
-    return True
+    return True, 1
 
 # Aliases
 to_filename = to_filepath
@@ -100,5 +124,12 @@ def from_relativefilepath(origin_entity, origin_cde="text", validate=True):
 
 #region #####     CONVERT: to_json                                        #####
 ###############################################################################
+def to_json(origin_entity, origin_cde="text", validate=True):
+    if 'json' in cde_index[origin_cde]['descendant_cdes']:
+        return True, 1
+    else:
+        return False, 0
 
 #endregion CONVERT: to_json
+
+cde_index = load_cde_index()

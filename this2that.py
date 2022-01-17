@@ -3,8 +3,6 @@ __doc__ = """
 
 This2ThatTitle - a toolkit for converting one entity to another
 
-Paragraph describing
-
 Usage:
     ./this2that.py arg1 [optionalarg2]
 
@@ -147,7 +145,7 @@ class Entity():
         gallery_func = getattr(gallery, func_name, None)
 
         try:
-            derived_cdes, operation = gallery_func(origin_entity)
+            derived_cdes, operation = gallery_func(origin_entity, validate=validate)
         except TypeError:
             print(f"{func_name} not yet defined in the gallery module") #TODO error logging
             status = 0
@@ -175,4 +173,6 @@ if __name__ == "__main__":
     entity = "test_string"
     cde = "string"
     eo = Entity(entity, cde)
-    eo.convert(eo.entity, eo.cde, 'json')
+    eo.entity = eo.convert(eo.entity, eo.cde, 'json')
+    print('wait')
+    #eo.output(eo.entity, eo.cde, 'C:\\Development\\tools_this2that\\test\\test.json')

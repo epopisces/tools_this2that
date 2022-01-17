@@ -1,0 +1,1 @@
+In this folder is an array of modules, including custom and customizable modules.  Some may be core (eg IPv4), others my be more like plugins
